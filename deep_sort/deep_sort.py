@@ -11,8 +11,8 @@ from .deep.reid_model_factory import show_downloadeable_models, get_model_link, 
     is_model_type_in_model_path, get_model_type, show_supported_models
 
 sys.path.append('deep_sort/deep/reid')
-from torchreid.utils import FeatureExtractor
-from torchreid.utils.tools import download_url
+from .deep.reid.torchreid.utils import FeatureExtractor
+from .deep.reid.torchreid.utils.tools import download_url
 
 show_downloadeable_models()
 
