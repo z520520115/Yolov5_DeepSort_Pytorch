@@ -56,10 +56,10 @@ def xyxy2tlwh(x):
     (top left x, top left y,width, height)
     '''
     y = torch.zeros_like(x) if isinstance(x, torch.Tensor) else np.zeros_like(x)
-    y[:, 0] = x[:, 0]
-    y[:, 1] = x[:, 1]
-    y[:, 2] = x[:, 2] - x[:, 0]
-    y[:, 3] = x[:, 3] - x[:, 1]
+    y[0] = x[0]
+    y[1] = x[1]
+    y[2] = x[2] - x[0]
+    y[3] = x[3] - x[1]
     return y
 ##########################画轨迹################################
 
@@ -214,29 +214,28 @@ def detect(opt):
                 # draw boxes for visualization
                 if len(outputs[i]) > 0:
                     for j, (output) in enumerate(outputs[i]):
-
                         bboxes = output[0:4]
                         id = output[4]
                         cls = output[5]
                         conf = output[6]
-
                         box_xywh = xyxy2tlwh(bboxes)
-
-                        for i in range(len(box_xywh)):
-                            x_center = box_xywh[j][0] + box_xywh[j][2] / 2
-                            y_center = box_xywh[j][1] + box_xywh[j][3] / 2
-                            ids = output[j][-1]
-                            center = [x_center, y_center]
-                            dict_box.setdefault(ids, []).append(center)
+                        print(box_xywh)
+                        ##########################画轨迹################################
+                        x_center = box_xywh[0] + box_xywh[2] / 2
+                        y_center = box_xywh[1] + box_xywh[3] / 2
+                        center = [x_center, y_center]
+                        dict_box.setdefault(id, []).append(center)
                         if frame_idx > 2:
                             for key, value in dict_box.items():
                                 for a in range(len(value) - 1):
-                                    color = COLORS_10[key % len(COLORS_10)]
+                                    # color = COLORS_10[key % len(COLORS_10)]
                                     index_start = a
                                     index_end = index_start + 1
-                                    cv2.line(im(), tuple(map(int, value[index_start])),
+                                    cv2.line(im0, tuple(map(int, value[index_start])),
                                              tuple(map(int, value[index_end])),
-                                             color, thickness=2, lineType=8)
+                                             (255, 0, 0), thickness=2, lineType=8)
+                        ##########################画轨迹################################
+
                         if save_txt:
                             # to MOT format
                             bbox_left = output[0]
